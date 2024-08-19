@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { handleError, handleSuccess } from "../../utils";
 import { ToastContainer } from "react-toastify";
+import { FaChalkboardTeacher, FaReact, FaJava, FaJs } from "react-icons/fa";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [testCode, setTestCode] = useState();
+  const [testCode, setTestCode] = useState("");
   const [loggedInUser, setLoggedInUser] = useState("");
   const [createdTests, setCreatedTests] = useState([]);
   const [foundCreatedTests, setFoundCreatedTests] = useState(false);
@@ -21,31 +22,25 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCreatedTests = async () => {
       try {
-        await axios
-          .get(`http://localhost:5000/findcreatedtests?user=${loggedInUser}`)
-          .then((response) => {
-            if (response.data.message === undefined)
-              setCreatedTests(response.data);
-            setFoundCreatedTests(true);
-          })
-          .catch((err) => console.log(err));
+        const response = await axios.get(
+          `http://localhost:5000/findcreatedtests?user=${loggedInUser}`
+        );
+        if (!response.data.message) setCreatedTests(response.data);
+        setFoundCreatedTests(true);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching created tests:", error);
       }
     };
 
     const fetchTakenTests = async () => {
       try {
-        await axios
-          .get(`http://localhost:5000/findtakentests?user=${loggedInUser}`)
-          .then((response) => {
-            if (response.data.message === undefined)
-              setTakenTests(response.data);
-            setFoundTakenTests(true);
-          })
-          .catch((err) => console.log(err));
+        const response = await axios.get(
+          `http://localhost:5000/findtakentests?user=${loggedInUser}`
+        );
+        if (!response.data.message) setTakenTests(response.data);
+        setFoundTakenTests(true);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching taken tests:", error);
       }
     };
 
@@ -55,23 +50,22 @@ const Dashboard = () => {
     }
   }, [loggedInUser]);
 
-  const getTest = async () => {
+  const getTest = async (code) => {
     try {
-      await axios
-        .get(`http://localhost:5000/taketest?code=${testCode}`)
-        .then((response) => {
-          const testData = response.data;
-          navigate(`/taketest/${testCode}`, {
-            state: [testData, loggedInUser],
-          });
-        })
-        .catch((err) => handleError("Invalid Test Code."));
+      const response = await axios.get(
+        `http://localhost:5000/taketest?code=${code}`
+      );
+      const testData = response.data;
+      navigate(`/taketest/${code}`, {
+        state: [testData, loggedInUser],
+      });
     } catch (error) {
+      handleError("Invalid Test Code.");
       console.error("Error fetching test:", error);
     }
   };
 
-  const handleLogout = (e) => {
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("loggedInUser");
     handleSuccess("User Logged Out.");
@@ -80,79 +74,110 @@ const Dashboard = () => {
     }, 1000);
   };
 
+  const handleTestClick = (code) => {
+    getTest(code);
+  };
+
   return (
-    <div className="contain">
-      <div className="start">
-        <h1>Welcome {loggedInUser}!</h1>
-        <button className="logoutbtn" onClick={handleLogout}>
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="logo">
+          <FaChalkboardTeacher className="logo-icon" />
+          <h1 className="platform-name">Testify</h1>
+        </div>
+        <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
-      </div>
+      </header>
 
-      <button
-        className="createtestbtnn"
-        onClick={() => navigate("/createtest")}
-      >
-        Create Test
-      </button>
-
-      <div className="validtest">
-        <p>Want to take a test?</p>
-        <input
-          className="validtesttnput"
-          type="text"
-          placeholder="Enter valid test code"
-          value={testCode}
-          onChange={(e) => setTestCode(e.target.value)}
-        />
-        <button className="validtestbtn" onClick={() => getTest()}>
-          Get Test
+      <div className="action-buttons">
+        <button className="create-test-btn" onClick={() => navigate("/createtest")}>
+          Create Test
         </button>
+
+        <div className="take-test">
+          <input
+            className="test-code-input"
+            type="text"
+            placeholder="Enter valid test code"
+            value={testCode}
+            onChange={(e) => setTestCode(e.target.value)}
+          />
+          <button className="get-test-btn" onClick={() => getTest(testCode)}>
+            Get Test
+          </button>
+        </div>
       </div>
 
-      <div className="displayentries">
-        <div className="displayentries-item1">
-          <p>Tests you created appear here:</p>
+      {/* Sample Tests Section */}
+      <div className="sample-tests-section">
+        <h2>Sample Tests</h2>
+        <div className="sample-tests-grid">
+          <div
+            className="sample-test-card"
+            onClick={() => handleTestClick("FRptTijP")}
+          >
+            <FaReact size={40} color="#61DBFB" />
+            <h3>Basic Reacts</h3>
+          </div>
+          <div
+            className="sample-test-card"
+            onClick={() => handleTestClick("XJByX07P")}
+          >
+            <FaJava size={40} color="#007396" />
+            <h3>Advanced Java</h3>
+          </div>
+          <div
+            className="sample-test-card"
+            onClick={() => handleTestClick("F8Q8pnYL")}
+          >
+            <FaJs size={40} color="#F7DF1E" />
+            <h3>Know Javascript</h3>
+          </div>
+        </div>
+      </div>
 
-          {loggedInUser && foundCreatedTests === false ? (
-            <div>Loading....</div>
-          ) : createdTests.length === 0 ? (
-            <div>You have not created any test yet.</div>
+      <div className="tests-container">
+        <div className="tests-section">
+          <h2>Created Tests</h2>
+          {foundCreatedTests ? (
+            createdTests.length > 0 ? (
+              <div className="tests-grid">
+                {createdTests.map((test, index) => (
+                  <div key={index} className="test-card">
+                    <h3>{test.testName}</h3>
+                    <p>Duration: {test.testDuration}</p>
+                    <p>ID: {test.testID}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No tests created yet.</p>
+            )
           ) : (
-            createdTests.map((test, testindex) => {
-              return (
-                <div className="testitems">
-                  <p className="titem">
-                    {testindex + 1}: {test.testName}
-                  </p>
-                  <p className="titem">{test.testDuration}</p>
-                  <p className="titem">{test.testID}</p>
-                </div>
-              );
-            })
+            <p>Loading...</p>
           )}
         </div>
 
-        <div className="displayentries-item2">
-          <p>Tests you took appear here:</p>
-
-          {loggedInUser && foundTakenTests === false ? (
-            <div>Loading....</div>
-          ) : takenTests.length === 0 ? (
-            <div>You have not taken any test yet.</div>
+        <div className="tests-section">
+          <h2>Taken Tests</h2>
+          {foundTakenTests ? (
+            takenTests.length > 0 ? (
+              <div className="tests-grid">
+                {takenTests.map((test, index) => (
+                  <div key={index} className="test-card">
+                    <h3>{test.testName}</h3>
+                    <p>Duration: {test.testDuration}</p>
+                    <p>ID: {test.testID}</p>
+                    <p>Attempted by: {test.tookBy}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No tests taken yet.</p>
+            )
           ) : (
-            takenTests.map((test, testindex) => {
-              return (
-                <div className="testitems">
-                  <p className="titem">
-                    {testindex + 1}: {test.testName}
-                  </p>
-                  <p className="titem">{test.testDuration}</p>
-                  <p className="titem">{test.testID}</p>
-                  <p className="titem">{test.tookBy}</p>
-                </div>
-              );
-            })
+            <p>Loading...</p>
           )}
         </div>
       </div>
