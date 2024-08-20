@@ -62,8 +62,8 @@ Testify is a comprehensive online testing platform designed to streamline the pr
 
 ## Sample Credentials
 
-- **Email:** azharsayzz@gmail.com
-- **Password:** Azhar@70
+- **Email:** Testify@gmail.com
+- **Password:** Testify@99
 
 ## Created by
 
