@@ -118,16 +118,32 @@ async function sendTestResultEmail(userEmail, testDetails, result) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'testify.proctor@gmail.com',
-      pass: 'cuxr iapb abey ioqo'
+      user: process.env.EMAIL_USER, // Use environment variable for email user
+      pass: process.env.EMAIL_PASS  // Use environment variable for email password
     }
   });
 
   const mailOptions = {
-    from: 'testify.proctor@gmail.com',
+    from: process.env.EMAIL_USER, // Use environment variable for email user
     to: userEmail,
     subject: 'Test Result',
-    text: `Hello, here are your results for the test ${testDetails.testName}:\nScore: ${result}/${testDetails.questions.length}`
+    html: `
+      <div style="font-family: 'Arial', sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <h1 style="color: #4A90E2; text-align: center;">Test Result</h1>
+        <p style="font-size: 16px;">Hello,</p>
+        <p style="font-size: 16px;">Here are your results for the test <strong>${testDetails.testName}</strong>:</p>
+        <div style="margin: 20px 0; padding: 15px; background-color: #fff; border-left: 5px solid #4A90E2; border-radius: 5px;">
+          <h2 style="font-size: 22px; color: #333;">Score: <span style="font-weight: bold; color: #e74c3c; font-size: 28px;">${result}</span> out of <span style="font-weight: bold; color: #2ecc71; font-size: 28px;">${testDetails.questions.length}</span></h2>
+        </div>
+        <p style="font-size: 16px;">Thank you for using our testing service. We hope to see you again soon!</p>
+        <p style="font-size: 16px;">Best Regards,<br/>The Testify Team</p>
+        <hr style="border-top: 1px solid #ccc;"/>
+        <footer style="font-size: 12px; text-align: center;">
+          <p>Created by <a href="https://imazhar.vercel.app" style="color: #4A90E2; text-decoration: none;">imazhar</a> | Follow us on 
+          <a href="https://www.twitter.com/apt_azhar" style="color: #4A90E2; text-decoration: none;">Twitter</a></p>
+        </footer>
+      </div>
+    `
   };
 
   console.log(`Attempting to send email to ${userEmail}`);

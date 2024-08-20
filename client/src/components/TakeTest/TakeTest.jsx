@@ -202,7 +202,7 @@ const TakeTest = () => {
     const postSubmit = async () => {
       try {
         await axios
-          .get(`http://localhost:5000/submittest?code=${state[0].testID}`)
+          .get(`${process.env.REACT_APP_API_URL}/submittest?code=${state[0].testID}`)
           .then((response) => {
             const origanswers = response.data;
 
@@ -230,7 +230,7 @@ const TakeTest = () => {
       console.log(data);
 
       axios
-        .post("http://localhost:5000/submittest", data)
+        .post(`${process.env.REACT_APP_API_URL}/submittest`, data)
         .then((result) => {
           console.log(result.data);
         })
@@ -247,7 +247,7 @@ const TakeTest = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/submittest', testResults);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/submittest`, testResults);
       console.log(response.data);
       handleSuccess("Test submitted successfully!");
     } catch (error) {
@@ -258,7 +258,7 @@ const TakeTest = () => {
   return (
     <div className="containerr" id="containerr">
       <div className="opening">
-        <h1>Take Test: {state[0].testName}</h1>
+        <h1>Test Name: {state[0].testName}</h1>
         <button
           className="backbtn"
           onClick={() => {
@@ -293,6 +293,7 @@ const TakeTest = () => {
         </div>
 
         <div className="intro2">
+          <h2 className="instructions-heading">Instructions:</h2>
           {permissions[0] === true && (
             <div>
               <ul>
@@ -344,7 +345,18 @@ const TakeTest = () => {
 
       {startTest === 2 && resok === true && (
         <div className="result">
-          Your score is: {result}/{answers.length}
+          <img src="https://res.cloudinary.com/dxecoctrm/image/upload/v1724122178/qptqp5nltosmuhrylcp3.png" alt="Success Icon" className="result-icon" />
+          <div className="result-text">
+            Your score is: {result}/{answers.length}
+          </div>
+          <div className="result-bar">
+            <div
+              className="result-progress"
+              style={{ width: `${(result / answers.length) * 100}%` }}
+            >
+              {Math.round((result / answers.length) * 100)}%
+            </div>
+          </div>
         </div>
       )}
 
@@ -355,65 +367,43 @@ const TakeTest = () => {
         <div>
           {state[0].questions.map((question, quesIndex) => {
             return (
-              <div key={quesIndex}>
-                Question {quesIndex + 1}: {question.quesText}
-                <div
-                  key={question.options.length + 1}
-                  style={{ display: "flex" }}
-                >
+              <div key={quesIndex} className="question-container">
+                <div className="question-text">
+                  Question {quesIndex + 1}: {question.quesText}
+                </div>
+                <div>
                   Options:
                   {question.options.map((option, optionIndex) => {
-                    if (typeof option === "string") {
-                      return (
-                        <ul>
-                          <input
-                            type="checkbox"
-                            checked={
-                              answers[quesIndex] === "?" ||
-                              answers[quesIndex].charCodeAt(0) - 48 - 1 !==
-                                optionIndex
-                                ? false
-                                : true
-                            }
-                            id={optionIndex}
-                            onChange={(e) =>
-                              handleOptionChange(e, quesIndex, optionIndex)
-                            }
-                          />
-                          <label for={optionIndex}>{option}</label>
-                        </ul>
-                      );
-                    } else {
-                      return (
-                        <ul>
-                          <input
-                            type="checkbox"
-                            checked={
-                              answers[quesIndex] === "?" ||
-                              answers[quesIndex].charCodeAt(0) - 48 - 1 !==
-                                optionIndex
-                                ? false
-                                : true
-                            }
-                            id={optionIndex}
-                            onChange={(e) =>
-                              handleOptionChange(e, quesIndex, optionIndex)
-                            }
-                          />
-                          <label for={optionIndex}>
+                    return (
+                      <div className="option-text">
+                        <input
+                          type="checkbox"
+                          checked={
+                            answers[quesIndex] === "?" ||
+                            answers[quesIndex].charCodeAt(0) - 48 - 1 !==
+                              optionIndex
+                              ? false
+                              : true
+                          }
+                          id={`option-${quesIndex}-${optionIndex}`}
+                          onChange={(e) =>
+                            handleOptionChange(e, quesIndex, optionIndex)
+                          }
+                        />
+                        <label htmlFor={`option-${quesIndex}-${optionIndex}`}>
+                          {typeof option === "string" ? option : (
                             <img
                               src={option.file}
                               alt=""
                               width="100px"
                               height="100px"
                             />
-                          </label>
-                        </ul>
-                      );
-                    }
+                          )}
+                        </label>
+                      </div>
+                    );
                   })}
                 </div>
-                <br />
                 <br />
               </div>
             );

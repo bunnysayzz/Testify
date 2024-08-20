@@ -241,7 +241,7 @@ const CreateTest = () => {
     console.log(data);
 
     axios
-      .post("http://localhost:5000/createtest", data)
+      .post(`${process.env.REACT_APP_API_URL}/createtest`, data)
       .then((result) => {
         console.log(result.data);
         handleSuccess("Test created successfully.");

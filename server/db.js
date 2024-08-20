@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb+srv://azharsayzz:Azhar70@testify.gfybw.mongodb.net/?retryWrites=true&w=majority&appName=Testify");
+    // Use environment variable for MongoDB URI
+    const dbURI = process.env.MONGO_URI;
+    await mongoose.connect(dbURI);
     console.log("MongoDB Connected.");
   } catch (err) {
     console.log(err);

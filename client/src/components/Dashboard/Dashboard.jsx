@@ -23,7 +23,7 @@ const Dashboard = () => {
     const fetchCreatedTests = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/findcreatedtests?user=${loggedInUser}`
+          `${process.env.REACT_APP_API_URL}/findcreatedtests?user=${loggedInUser}`
         );
         if (!response.data.message) setCreatedTests(response.data);
         setFoundCreatedTests(true);
@@ -35,7 +35,7 @@ const Dashboard = () => {
     const fetchTakenTests = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/findtakentests?user=${loggedInUser}`
+          `${process.env.REACT_APP_API_URL}/findtakentests?user=${loggedInUser}`
         );
         if (!response.data.message) setTakenTests(response.data);
         setFoundTakenTests(true);
@@ -53,7 +53,7 @@ const Dashboard = () => {
   const getTest = async (code) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/taketest?code=${code}`
+        `${process.env.REACT_APP_API_URL}/taketest?code=${code}`
       );
       const testData = response.data;
       navigate(`/taketest/${code}`, {
@@ -92,7 +92,7 @@ const Dashboard = () => {
 
       <div className="action-buttons">
         <button className="create-test-btn" onClick={() => navigate("/createtest")}>
-          Create Test
+          Create Own Test
         </button>
 
         <div className="take-test">
@@ -111,7 +111,7 @@ const Dashboard = () => {
 
       {/* Sample Tests Section */}
       <div className="sample-tests-section">
-        <h2>Sample Tests</h2>
+        <h2>Available Tests</h2>
         <div className="sample-tests-grid">
           <div
             className="sample-test-card"
@@ -160,7 +160,7 @@ const Dashboard = () => {
         </div>
 
         <div className="tests-section">
-          <h2>Taken Tests</h2>
+          <h2>Attempted Tests</h2>
           {foundTakenTests ? (
             takenTests.length > 0 ? (
               <div className="tests-grid">
@@ -169,12 +169,12 @@ const Dashboard = () => {
                     <h3>{test.testName}</h3>
                     <p>Duration: {test.testDuration}</p>
                     <p>ID: {test.testID}</p>
-                    <p>Attempted by: {test.tookBy}</p>
+                    
                   </div>
                 ))}
               </div>
             ) : (
-              <p>No tests taken yet.</p>
+              <p>Not Attempted yet.</p>
             )
           ) : (
             <p>Loading...</p>
