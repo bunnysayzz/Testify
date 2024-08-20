@@ -45,6 +45,11 @@ Testify is a comprehensive online testing platform designed to streamline the pr
 ![Test Interface](test.jpg)
 *This interface shows the live test environment, which includes security features like camera monitoring and tab detection.*
 
+### Create Your Own Test
+![Create Your Own Test](createtest.jpg)
+*This screenshot demonstrates the process of creating a custom test, where educators can specify the test name, set time limits, choose questions, and configure other settings.*
+
+
 ### Result Email Template
 ![Email Template](mail.jpg)
 *Customizable email template for sending test results, using Nodemailer for email delivery.*
