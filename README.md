@@ -28,7 +28,7 @@ Testify is a comprehensive online testing platform designed to streamline the pr
 - **Integration with Educational Tools:** Testify can be integrated with other educational tools and platforms to provide a seamless experience for both students and educators.
 
 ### Additional Features
-- **Real-Time Notifications:** Users receive real-time notifications about test schedules, changes, and results through email.
+- **Real-Time Notifications:** Users receive real-time notification results through email.
 - **Analytics and Reporting:** Advanced analytics for tracking performance and detailed reports are generated for each test, which can be exported for further analysis.
 
 ## Screenshots
@@ -67,4 +67,4 @@ Testify is a comprehensive online testing platform designed to streamline the pr
 
 ## Created by
 
-[imazhar](https://imazhar.vercel.com) ❤️
+[imazhar](https://imazhar.vercel.app) ❤️
