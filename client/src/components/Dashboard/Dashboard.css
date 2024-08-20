@@ -105,10 +105,10 @@ body {
 /* Sample Tests Section */
 .sample-tests-section {
   margin-top: 40px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque white for the section */
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Lighter shadow for subtle effect */
 }
 
 .sample-tests-section h2 {
@@ -125,25 +125,32 @@ body {
 }
 
 .sample-test-card {
-  background-color: #007bff;
-  border: none;
-  color: #fff;
+  background-color: #ffffff; /* Solid white for better contrast */
+  border: 1px solid #e0e0e0; /* Adding a light border for definition */
+  color: #333;
   border-radius: 12px;
   padding: 30px;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
 }
 
 .sample-test-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
 }
 
 .sample-test-card h3 {
   font-size: 1.5rem;
   margin-top: 10px;
-  color: #fff;
+  color: #333;
+  font-weight: 500; /* Slightly bolder font for headings */
+}
+
+/* Icon styling for better visibility */
+.FaReact, .FaJava, .FaJs {
+  margin-bottom: 10px; /* Space between icon and text */
 }
 
 /* Created and Taken Tests Section */
