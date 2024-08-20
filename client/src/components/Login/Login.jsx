@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../utils";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 import "./Login.css";
 
 const Login = () => {
@@ -59,41 +61,47 @@ const Login = () => {
   };
 
   return (
-    <div className="body">
-      <h1>Login To Testify</h1>
+    <div>
+      <div className="header">
+        <FontAwesomeIcon icon={faGraduationCap} />
+        <span>Testify</span>
+      </div>
+      <div className="body">
+        <h1>Login</h1>
 
-      <form onSubmit={handleLogin}>
-        <div className="item">
-          <input
-            onChange={handleChange}
-            type="email"
-            name="email"
-            autoFocus
-            placeholder="Email"
-            value={info.email}
-          />
-        </div>
+        <form onSubmit={handleLogin}>
+          <div className="item">
+            <input
+              onChange={handleChange}
+              type="email"
+              name="email"
+              autoFocus
+              placeholder="Email"
+              value={info.email}
+            />
+          </div>
 
-        <div className="item">
-          <input
-            onChange={handleChange}
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={info.password}
-          />
-        </div>
+          <div className="item">
+            <input
+              onChange={handleChange}
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={info.password}
+            />
+          </div>
 
-        <div>
-          Don't have an account? <Link to="/signup">Signup</Link>
-        </div>
+          <div>
+            Don't have an account? <Link to="/signup">Signup</Link>
+          </div>
 
-        <button type="submit" className="submitbtn">
-          Login
-        </button>
-      </form>
+          <button type="submit" className="submitbtn">
+            Login
+          </button>
+        </form>
 
-      <ToastContainer />
+        <ToastContainer />
+      </div>
     </div>
   );
 };
