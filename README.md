@@ -2,6 +2,11 @@
 
 Testify is a comprehensive online testing platform designed to streamline the process of conducting and managing online exams. It provides robust features for creating, administering, and monitoring tests, ensuring a secure and efficient testing environment for both educators and students.
 
+[Self Hosted Link: Testify Proctor](https://testify-proctor.vercel.app)
+
+### **⚠️ WARNING: Please wait for 50 seconds while logging in, as the server is running on a free instance, which requires time to start.**
+
+
 ## Key Features
 
 - **Test Creation:** Educators can easily create tests, specifying test names, durations, and questions.
