@@ -5,6 +5,7 @@ import "./TakeTest.css";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../utils";
 import axios from "axios";
+import Webcam from 'react-webcam';
 
 const TakeTest = () => {
   const { state } = useLocation();
@@ -41,6 +42,12 @@ const TakeTest = () => {
   const [resok, setResOk] = useState(false);
   const [permissions, setPermissions] = useState([false, false, false]);
   const [fullscreen, setFullscreen] = useState(false);
+  const [showCamera, setShowCamera] = useState(true); // Set to true to show the webcam by default
+  const webcamRef = useRef(null);
+
+  const toggleCamera = () => {
+    setShowCamera(!showCamera);
+  };
 
   const handleStartTest = () => {
     handleSuccess("Test Started.");
@@ -305,6 +312,10 @@ const TakeTest = () => {
                   </p>
                 </li>
               </ul>
+              <button className="camera-toggle" onClick={toggleCamera}>
+                {showCamera ? 'Hide Camera' : 'Show Camera'}
+              </button>
+              {showCamera && <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" className="webcam-view" />}
             </div>
           )}
 
