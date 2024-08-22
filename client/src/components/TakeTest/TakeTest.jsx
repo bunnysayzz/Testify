@@ -200,8 +200,22 @@ const TakeTest = () => {
   };
 
   const handleFinishTest = () => {
-    console.log(answers);
+    // Check if all questions have been answered
+    const allAnswered = !answers.includes("?");
 
+    if (!allAnswered) {
+      if (window.confirm("Not all questions have been answered. Are you sure you want to finish the test?")) {
+        finishTestProcedure();
+      }
+    } else {
+      if (window.confirm("Are you sure you want to submit the test?")) {
+        finishTestProcedure();
+      }
+    }
+  };
+
+  const finishTestProcedure = () => {
+    console.log(answers);
     setFinishTest(true);
     setStartTest(2);
     handleSuccess("Test Submitted.");
