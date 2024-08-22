@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./TakeTest.css";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../utils";
@@ -44,6 +43,9 @@ const TakeTest = () => {
   const [fullscreen, setFullscreen] = useState(false);
   const [showCamera, setShowCamera] = useState(true); // Set to true to show the webcam by default
   const webcamRef = useRef(null);
+
+  // State to track the current question index
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const toggleCamera = () => {
     setShowCamera(!showCamera);
@@ -262,6 +264,11 @@ const TakeTest = () => {
     }
   };
 
+  // Function to jump to a specific question
+  const handleJumpToQuestion = (index) => {
+    setCurrentQuestionIndex(index);
+  };
+
   return (
     <div className="containerr" id="containerr">
       <div className="opening">
@@ -276,80 +283,92 @@ const TakeTest = () => {
         </button>
       </div>
 
-      <div className="intro">
-        <div className="intro1">
-          <p>Created by: {state[0].createdBy}</p>
-          <p>Test Code: {state[0].testID}</p>
-          <p>Time Remaining: {getFormattedTime(time)}</p>
+      <div className="test-body">
+        <div className="intro">
+          <div className="intro1">
+            <p>Created by: {state[0].createdBy}</p>
+            <p>Test Code: {state[0].testID}</p>
+            <p>Time Remaining: {getFormattedTime(time)}</p>
 
-          <button
-            className="startbtn"
-            onClick={() => handleStartTest()}
-            disabled={!(startTest === 0)}
-          >
-            Start Test
-          </button>
+            <button
+              className="startbtn"
+              onClick={() => handleStartTest()}
+              disabled={!(startTest === 0)}
+            >
+              Start Test
+            </button>
 
-          <button
-            className="finishbtn"
-            onClick={() => handleFinishTest()}
-            disabled={!(startTest === 1)}
-          >
-            Finish Test
-          </button>
+            <button
+              className="finishbtn"
+              onClick={() => handleFinishTest()}
+              disabled={!(startTest === 1)}
+            >
+              Finish Test
+            </button>
+          </div>
+
+          <div className="intro2">
+            <h2 className="instructions-heading">Instructions:</h2>
+            {permissions[0] === true && (
+              <div>
+                <ul>
+                  <li>
+                    <p>
+                      This test has camera and audio proctoring. Kindly refrain
+                      from cheating or making any unnecessary movements else test
+                      will be terminated.
+                    </p>
+                  </li>
+                </ul>
+                <button className="camera-toggle" onClick={toggleCamera}>
+                  {showCamera ? 'Hide Camera' : 'Show Camera'}
+                </button>
+                {showCamera && <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" className="webcam-view" />}
+              </div>
+            )}
+
+            {permissions[1] === true && (
+              <div>
+                <ul>
+                  <li>
+                    <p>
+                      Kindly keep full screen mode else test will be terminated.
+                    </p>
+                    <button className="fullscreenbtn" onClick={handleFullScreen}>
+                      {fullscreen === false
+                        ? "Enable Full Screen"
+                        : "Disable Full Screen"}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            {permissions[2] === true && (
+              <div>
+                <ul>
+                  <li>
+                    <p>
+                      Kindly refrain from switching tabs or using other
+                      applications while taking the test. If any such activity is
+                      detected, your test will be terminated.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="intro2">
-          <h2 className="instructions-heading">Instructions:</h2>
-          {permissions[0] === true && (
-            <div>
-              <ul>
-                <li>
-                  <p>
-                    This test has camera and audio proctoring. Kindly refrain
-                    from cheating or making any unnecessary movements else test
-                    will be terminated.
-                  </p>
-                </li>
-              </ul>
-              <button className="camera-toggle" onClick={toggleCamera}>
-                {showCamera ? 'Hide Camera' : 'Show Camera'}
+        {startTest === 1 && (
+          <div className="sidebar">
+            {state[0].questions.map((_, index) => (
+              <button key={index} onClick={() => handleJumpToQuestion(index)} className={`nav-button ${index === currentQuestionIndex ? "active" : ""}`}>
+                {index + 1}
               </button>
-              {showCamera && <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" className="webcam-view" />}
-            </div>
-          )}
-
-          {permissions[1] === true && (
-            <div>
-              <ul>
-                <li>
-                  <p>
-                    Kindly keep full screen mode else test will be terminated.
-                  </p>
-                  <button className="fullscreenbtn" onClick={handleFullScreen}>
-                    {fullscreen === false
-                      ? "Enable Full Screen"
-                      : "Disable Full Screen"}
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-
-          {permissions[2] === true && (
-            <div>
-              <ul>
-                <li>
-                  <p>
-                    Kindly refrain from switching tabs or using other
-                    applications while taking the test. If any such activity is
-                    detected, your test will be terminated.
-                  </p>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <br />
@@ -375,50 +394,35 @@ const TakeTest = () => {
       <br />
 
       {startTest === 1 && finishTest === false && (
-        <div>
-          {state[0].questions.map((question, quesIndex) => {
-            return (
-              <div key={quesIndex} className="question-container">
-                <div className="question-text">
-                  Question {quesIndex + 1}: {question.quesText}
-                </div>
-                <div>
-                  Options:
-                  {question.options.map((option, optionIndex) => {
-                    return (
-                      <div className="option-text">
-                        <input
-                          type="checkbox"
-                          checked={
-                            answers[quesIndex] === "?" ||
-                            answers[quesIndex].charCodeAt(0) - 48 - 1 !==
-                              optionIndex
-                              ? false
-                              : true
-                          }
-                          id={`option-${quesIndex}-${optionIndex}`}
-                          onChange={(e) =>
-                            handleOptionChange(e, quesIndex, optionIndex)
-                          }
-                        />
-                        <label htmlFor={`option-${quesIndex}-${optionIndex}`}>
-                          {typeof option === "string" ? option : (
-                            <img
-                              src={option.file}
-                              alt=""
-                              width="100px"
-                              height="100px"
-                            />
-                          )}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-                <br />
-              </div>
-            );
-          })}
+        <div className="question-display">
+          <div className="question-container">
+            <div className="question-text">
+              Question {currentQuestionIndex + 1}: {state[0].questions[currentQuestionIndex].quesText}
+            </div>
+            <div>
+              Options:
+              {state[0].questions[currentQuestionIndex].options.map((option, optionIndex) => {
+                return (
+                  <div className="option-text">
+                    <input
+                      type="checkbox"
+                      checked={answers[currentQuestionIndex] === "?" || answers[currentQuestionIndex].charCodeAt(0) - 48 - 1 !== optionIndex ? false : true}
+                      id={`option-${currentQuestionIndex}-${optionIndex}`}
+                      onChange={(e) => handleOptionChange(e, currentQuestionIndex, optionIndex)}
+                    />
+                    <label htmlFor={`option-${currentQuestionIndex}-${optionIndex}`}>
+                      {typeof option === "string" ? option : (
+                        <img src={option.file} alt="" width="100px" height="100px" />
+                      )}
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+            <br />
+          </div>
+          <button onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)} disabled={currentQuestionIndex === 0}>Previous</button>
+          <button onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)} disabled={currentQuestionIndex === state[0].questions.length - 1}>Next</button>
         </div>
       )}
 

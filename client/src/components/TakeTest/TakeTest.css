@@ -213,3 +213,86 @@
     background-color: #4CAF50;
     color: white;
 }
+
+.test-body {
+  display: flex;
+  justify-content: space-between;
+}
+
+.intro {
+  flex: 3;
+  display: flex;
+}
+.sidebar {
+  background-color: #f4f4f4;
+  padding: 10px; /* Minimal padding for compact layout */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns per row */
+  gap: 20px 3px; /* Small gap between rows and columns */
+  margin-left: 20px;
+  grid-auto-rows: 30px; /* Fixed row height */
+  grid-auto-flow: row dense; /* Ensures filling of rows before moving to next */
+}
+
+.nav-button {
+  background-color: #e7e7e7;
+  border: none;
+  padding: 0; /* No padding to maximize space usage */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 50px; /* Fixed width for the button */
+  height: 40px; /* Fixed height for the button */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8px; /* Reduced font size for smaller buttons */
+}
+
+.nav-button:hover {
+  background-color: #d7d7d7;
+}
+
+.nav-button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.question-display {
+  margin-top: 20px;
+}
+
+.question-display button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.question-display button:first-child {
+  float: left;
+}
+
+.question-display button:last-child {
+  float: right;
+}
+
+.question-display button:hover {
+  background-color: #45a049;
+}
+
+.question-display button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
