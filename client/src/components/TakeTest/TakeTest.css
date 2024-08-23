@@ -99,48 +99,6 @@
   font-weight: 800;
   margin-top: 30px;
   justify-content: center;
-}
-.question-container {
-  background-color: #f0f0f7; /* Apple-like greyish color */
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.05); /* Very subtle border for depth */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Soft shadow for a subtle 3D effect */
-  transition: transform 0.3s ease-in-out;
-}
-
-.question-container:hover {
-  transform: scale(1.02); /* Interactive feedback on hover */
-}
-
-.question-text {
-  font-size: 18px; /* Larger font size for questions */
-  font-weight: 600; /* Semi-bold for better visibility */
-  margin-bottom: 10px; /* Space between question and options */
-  color: #333; /* Darker text for better readability */
-}
-
-.option-text {
-  font-size: 16px; /* Slightly smaller than question text */
-  font-weight: 400; /* Normal weight for options */
-  color: #555; /* Slightly lighter than question text */
-  display: flex;
-  align-items: center; /* Align checkbox and label */
-  margin-bottom: 5px; /* Space between options */
-}
-
-.containerr:fullscreen {
-  overflow-y: auto; /* Allow scrolling in fullscreen */
-  --backdrop-color: #ffffff; /* Keep the background white */
-  background: var(--backdrop-color);
-}
-
-.result {
-  font-size: 20px;
-  font-weight: 800;
-  margin-top: 30px;
-  justify-content: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -170,8 +128,8 @@
 
 .result-progress {
   height: 20px;
-  background-color: #4CAF50; /* Green for positive feedback */
-  width: 0; /* Dynamically set this in JS */
+  background-color: #4CAF50;
+  width: 0;
   border-radius: 5px;
   text-align: center;
   line-height: 20px;
@@ -225,29 +183,29 @@
 }
 .sidebar {
   background-color: #f4f4f4;
-  padding: 10px; /* Minimal padding for compact layout */
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columns per row */
-  gap: 20px 3px; /* Small gap between rows and columns */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 3px;
   margin-left: 20px;
-  grid-auto-rows: 30px; /* Fixed row height */
-  grid-auto-flow: row dense; /* Ensures filling of rows before moving to next */
+  grid-auto-rows: 30px;
+  grid-auto-flow: row dense;
 }
 
 .nav-button {
   background-color: #e7e7e7;
   border: none;
-  padding: 0; /* No padding to maximize space usage */
+  padding: 0;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 50px; /* Fixed width for the button */
-  height: 40px; /* Fixed height for the button */
+  width: 50px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 8px; /* Reduced font size for smaller buttons */
+  font-size: 8px;
 }
 
 .nav-button:hover {
@@ -294,5 +252,89 @@
   cursor: not-allowed;
 }
 
+.question-container {
+  background-color: #f0f0f7;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease-in-out;
+}
 
+.question-container:hover {
+  transform: scale(1.02);
+}
 
+.question-text {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.option-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #555;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.containerr:fullscreen {
+  overflow-y: auto;
+  --backdrop-color: #ffffff;
+  background: var(--backdrop-color);
+}
+
+/* Enhanced Modal Styles */
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  max-width: 600px;
+  min-width: 300px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  z-index: 1050;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+  color: #666;
+}
+
+.modal-footer {
+  padding-top: 10px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.modal-button:hover {
+  background-color: #0056b3;
+}

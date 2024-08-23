@@ -5,6 +5,10 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../utils";
 import axios from "axios";
 import Webcam from 'react-webcam';
+import Modal from 'react-modal';
+
+// Ensure to set the app element for accessibility reasons
+Modal.setAppElement('#root');
 
 const TakeTest = () => {
   const { state } = useLocation();
@@ -43,6 +47,9 @@ const TakeTest = () => {
   const [fullscreen, setFullscreen] = useState(false);
   const [showCamera, setShowCamera] = useState(true); // Set to true to show the webcam by default
   const webcamRef = useRef(null);
+  const [countdown, setCountdown] = useState(5); // State to manage countdown
+  const countdownIntervalRef = useRef(null); // Ref to store the countdown interval
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // State to track the current question index
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -53,6 +60,7 @@ const TakeTest = () => {
 
   const handleStartTest = () => {
     handleSuccess("Test Started.");
+    enterFullScreen(); // Trigger full screen when test starts
     setTimeout(() => {
       setStartTest(1);
     }, 500);
@@ -106,26 +114,71 @@ const TakeTest = () => {
     }
   }, [startTest]);
 
-  const handleFullScreen = () => {
+  // Function to handle entering full screen
+  const enterFullScreen = () => {
     const element = document.getElementById("containerr");
-    const isFullScreen = document.fullscreenElement;
-
-    if (isFullScreen) {
-      document.exitFullscreen();
-      setFullscreen(false);
-    } else {
+    if (element.requestFullscreen) {
       element.requestFullscreen();
-      setFullscreen(true);
     }
   };
 
-  useEffect(() => {
-    window
-      .matchMedia("(display-mode: fullscreen)")
-      .addListener(({ matches }) => {
-        if (!matches) setFullscreen(false);
-        else setFullscreen(true);
+  // Function to handle exiting full screen
+  const exitFullScreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+
+  // Toggle full screen based on current state
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      enterFullScreen();
+    } else {
+      exitFullScreen();
+    }
+  };
+
+  // Start countdown and open modal when full screen is exited
+  const startCountdown = () => {
+    setIsModalOpen(true);
+    setCountdown(5);
+    countdownIntervalRef.current = setInterval(() => {
+      setCountdown((prevCount) => {
+        if (prevCount === 1) {
+          clearInterval(countdownIntervalRef.current);
+          handleFinishTest(true); // Pass true to indicate automatic submission
+          setIsModalOpen(false); // Close modal
+          return 0;
+        }
+        return prevCount - 1;
       });
+    }, 1000);
+  };
+
+  // Stop countdown and clear interval
+  const stopCountdown = () => {
+    clearInterval(countdownIntervalRef.current);
+    setCountdown(5); // Reset countdown
+    setIsModalOpen(false);
+  };
+
+  // Effect to monitor full screen changes and update state
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      if (!document.fullscreenElement) {
+        setFullscreen(false);
+        startCountdown(); // Start countdown when full screen is exited
+      } else {
+        setFullscreen(true);
+        stopCountdown(); // Stop countdown when full screen is re-entered
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -144,26 +197,6 @@ const TakeTest = () => {
       window.removeEventListener("blur", handleBlur);
     };
   }, [permissions, startTest]);
-
-  // useEffect(() => {
-  //   if (startTest === 1 && permissions[1] === true) {
-  //     window
-  //       .matchMedia("(display-mode: fullscreen)")
-  //       .addListener(({ matches }) => {
-  //         if (!matches) {
-  //           if (
-  //             window.confirm(
-  //               "Enable full screen mode else test will be terminated."
-  //             )
-  //           ) {
-  //             const element = document.getElementById("containerr");
-  //             element.requestFullscreen();
-  //             setFullscreen(true);
-  //           }
-  //         } else setFullscreen(true);
-  //       });
-  //   }
-  // }, [startTest, permissions]);
 
   useEffect(() => {
     if (startTest === 1 && time > 0) {
@@ -199,17 +232,20 @@ const TakeTest = () => {
     setAnswers(updatedAnswers);
   };
 
-  const handleFinishTest = () => {
-    // Check if all questions have been answered
-    const allAnswered = !answers.includes("?");
-
-    if (!allAnswered) {
-      if (window.confirm("Not all questions have been answered. Are you sure you want to finish the test?")) {
-        finishTestProcedure();
-      }
+  const handleFinishTest = (autoSubmit = false) => {
+    if (autoSubmit) {
+      finishTestProcedure();
     } else {
-      if (window.confirm("Are you sure you want to submit the test?")) {
-        finishTestProcedure();
+      // Check if all questions have been answered
+      const allAnswered = !answers.includes("?");
+      if (!allAnswered) {
+        if (window.confirm("Not all questions have been answered. Are you sure you want to finish the test?")) {
+          finishTestProcedure();
+        }
+      } else {
+        if (window.confirm("Are you sure you want to submit the test?")) {
+          finishTestProcedure();
+        }
       }
     }
   };
@@ -287,14 +323,16 @@ const TakeTest = () => {
     <div className="containerr" id="containerr">
       <div className="opening">
         <h1>Test Name: {state[0].testName}</h1>
-        <button
-          className="backbtn"
-          onClick={() => {
-            navigate("/dashboard");
-          }}
-        >
-          Go to Dashboard
-        </button>
+        {startTest === 0 && (
+          <button
+            className="backbtn"
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+          >
+            Go to Dashboard
+          </button>
+        )}
       </div>
 
       <div className="test-body">
@@ -349,9 +387,7 @@ const TakeTest = () => {
                       Kindly keep full screen mode else test will be terminated.
                     </p>
                     <button className="fullscreenbtn" onClick={handleFullScreen}>
-                      {fullscreen === false
-                        ? "Enable Full Screen"
-                        : "Disable Full Screen"}
+                      {fullscreen ? "Disable Full Screen" : "Enable Full Screen"}
                     </button>
                   </li>
                 </ul>
@@ -439,6 +475,23 @@ const TakeTest = () => {
           <button onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)} disabled={currentQuestionIndex === state[0].questions.length - 1}>Next</button>
         </div>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => handleFinishTest(true)} // Also handle auto-submit on modal close
+        contentLabel="Fullscreen Warning"
+        className="modal-content"
+      >
+        <div className="modal-header">
+          <h2>Warning</h2>
+        </div>
+        <div className="modal-body">
+          You have exited fullscreen mode. The test will auto-submit in {countdown} seconds unless you re-enter fullscreen mode.
+        </div>
+        <div className="modal-footer">
+          <button onClick={enterFullScreen} className="modal-button">Re-enter Full Screen</button>
+        </div>
+      </Modal>
 
       <ToastContainer />
     </div>
